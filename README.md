@@ -1,4 +1,4 @@
-A simple adventure game by {who?} based on a simple adventure game engine by [Adam Smith](https://github.com/rndmcnlly).
+A simple adventure game by Isai Rincon based on a simple adventure game engine by [Adam Smith](https://github.com/rndmcnlly).
 
 Code requirements:
 - **4+ scenes based on `AdventureScene`**: unsatisfied (name at least 4 of the classes).
@@ -19,4 +19,4 @@ Asset sources:
 
 Code sources:
 - `adventure.js` and `index.html` were created for this project [Adam Smith](https://github.com/rndmcnlly) and edited by me.
-- `game.js` was sketched by [Adam Smith](https://github.com/rndmcnlly) and rewritten by me.
+- `game.js` was sketched by [Adam Smith](https://github.com/rndmcnlly) and partially rewritten by me.

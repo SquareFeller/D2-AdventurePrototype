@@ -147,4 +147,8 @@ class AdventureScene extends Phaser.Scene {
     onEnter() {
         console.warn('This AdventureScene did not implement onEnter():', this.constructor.name);
     }
+
+    makebg(key){
+        this.add.sprite(0, 0, key).setOrigin(0,0).setDisplaySize(this.game.config.width * 0.75, this.game.config.height);
+    }
 }
