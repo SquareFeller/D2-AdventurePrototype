@@ -151,4 +151,14 @@ class AdventureScene extends Phaser.Scene {
     makebg(key){
         this.add.sprite(0, 0, key).setOrigin(0,0).setDisplaySize(this.game.config.width * 0.75, this.game.config.height);
     }
+
+    blinking(key){
+        this.tweens.add({
+            targets: key,
+            alpha: {from: 0.05, to: 1},
+            duration: 1500,
+            repeat: -1,
+            yoyo: true
+        });
+    }
 }

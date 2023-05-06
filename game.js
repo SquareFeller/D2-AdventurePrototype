@@ -10,7 +10,10 @@ class Basement_Exterior extends AdventureScene {
         let right_door = this.add.text(770, 550, "DOOR");
         right_door.setFontSize(64)
             .setInteractive()
-            .on('pointerover', () => this.showMessage("A door to your right."))
+            .on('pointerover', () => {
+                this.showMessage("A door to your right.");
+                this.blinking(right_door);
+            })
             .on('pointerdown', () => {
                 this.showMessage("Locked! No way you're getting into this one.")
                 this.tweens.add({
@@ -23,7 +26,10 @@ class Basement_Exterior extends AdventureScene {
                 });
             });
         let open_door = this.add.text(470, 550, "DOOR").setFontSize(55).setInteractive();
-        open_door.on('pointerover', () => this.showMessage("An open door to your left. Enter?"));
+        open_door.on('pointerover', () => {
+            this.showMessage("An open door to your left. Enter?");
+            this.blinking(open_door);
+        });
         open_door.on('pointerdown', () => this.gotoScene('stairwell'));
         
         
@@ -97,9 +103,8 @@ class Stairs extends AdventureScene{
             this.showMessage("Continue down the stairs?");
         })
         .on('pointerdown', () => {
-            this.gotoScene('stair_bottom'); //make a scene ASAP
-        });
-        
+            this.gotoScene('bottom');
+        })
         let backward = this.add.text(350, 800, "⬇️").setInteractive().setScale(3, 3);
         backward.on('pointerover', () => {
             this.showMessage("Go back?");
@@ -110,18 +115,37 @@ class Stairs extends AdventureScene{
     }
 }
 
-class Bottom extends AdventureScene {
+class Bottom extends AdventureScene{
     constructor(){
-        super('stair_bottom', "Bottom of Stairs")
+        super('bottom', "Bottom of Stairs");
     }
+
     preload(){
-        //code here
+        this.load.image('bottom', 'assets/bottom.jpg');
     }
 
     onEnter(){
-        //code here
+        this.makebg('bottom');
     }
+
 }
+
+
+class Stairs_Right extends AdventureScene{
+    constructor(){
+        super('right', "Spandrel")
+    }
+    preload(){
+        this.load.image('floor', 'assets/key_on_floor.png');
+        this.load.image('first key', 'assets/first_key.png');
+    }
+    onEnter(){
+        this.makebg('floor');
+        
+    }
+
+}
+
 
 
 // class Demo2 extends AdventureScene {
@@ -216,13 +240,14 @@ class Title extends Phaser.Scene {
         let play = this.add.text(655, 540, "Begin").setFontSize(45);
         play.setInteractive();
         play.alpha = 0.05;
-        this.tweens.add({
-            targets: play,
-            alpha: {from: 0.05, to: 1},
-            duration: 1500,
-            repeat: -1,
-            yoyo: true
-        });
+         this.tweens.add({
+             targets: play,
+             alpha: {from: 0.05, to: 1},
+             duration: 1500,
+             repeat: -1,
+             yoyo: true
+         });
+        //this.blinking(play);
         play.on('pointerdown', () => {
             this.cameras.main.fade(1000, 0, 0, 0);
             this.time.delayedCall(1000, () => this.scene.start('basement_exterior'));
