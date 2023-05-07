@@ -24,7 +24,8 @@ class Basement_Exterior extends AdventureScene {
                     ease: 'Sine.InOut',
                     duration: 150
                 });
-            });
+            })
+            // .on('pointerout', () => this.tweens.pause);
         let open_door = this.add.text(470, 550, "DOOR").setFontSize(55).setInteractive();
         open_door.on('pointerover', () => {
             this.showMessage("An open door to your left. Enter?");
@@ -101,10 +102,8 @@ class Stairs extends AdventureScene{
         let forward = this.add.text(350, 450, "⬆️").setInteractive().setScale(3,3);
         forward.on('pointerover', () => {
             this.showMessage("Continue down the stairs?");
-        })
-        .on('pointerdown', () => {
-            this.gotoScene('bottom');
-        })
+        });
+        forward.on('pointerdown', () => this.scene.start('b'))
         let backward = this.add.text(350, 800, "⬇️").setInteractive().setScale(3, 3);
         backward.on('pointerover', () => {
             this.showMessage("Go back?");
@@ -117,17 +116,31 @@ class Stairs extends AdventureScene{
 
 class Bottom extends AdventureScene{
     constructor(){
-        super('bottom', "Bottom of Stairs");
+        super("b", "Bottom of Stairwell");
     }
-
     preload(){
         this.load.image('bottom', 'assets/bottom.jpg');
     }
-
     onEnter(){
         this.makebg('bottom');
-    }
+        let right = this.add.text(850, 550, "➡️").setInteractive().setScale(3,3);
+        right.on('pointerover', () => {
+            this.showMessage("Examine the space underneath the stairs?");
+        });
+        right.on('pointerdown', () => this.scene.start('right'));
 
+        let backward = this.add.text(450, 900, "⬇️").setInteractive().setScale(3, 3);
+        backward.on('pointerover', () => {
+            this.showMessage("Go back?");
+        })
+        .on('pointerdown', () =>{
+            this.gotoScene('stairwell');
+        });
+
+        let left = this.add.text(350, 550, "⬅️").setInteractive().setScale(3, 3);
+        left.on("pointerdown", () => this.gotoScene('first_door'));
+        left.on("pointerover", () => this.showMessage("Turn left?"))
+    }
 }
 
 
@@ -136,17 +149,168 @@ class Stairs_Right extends AdventureScene{
         super('right', "Spandrel")
     }
     preload(){
-        this.load.image('floor', 'assets/key_on_floor.png');
+        this.load.image('floor', 'assets/no_key_on_floor.png');
         this.load.image('first key', 'assets/first_key.png');
     }
     onEnter(){
         this.makebg('floor');
-        
+
+        let check = 0;
+        let k = this.add.sprite(660, 380, "first key").setInteractive().setScale(1.2, 1.2);
+        k.angle = -15;
+        let glow = k.preFX.addGlow();
+        k.on('pointerover', () => this.showMessage("A key?"));
+        k.on('pointerdown', () => {
+            this.gainItem('key');
+            if(check == 0){
+                this.showMessage("Obtained key!")
+            }else{
+                this.showMessage("There's nothing else to take.");
+            }
+            check++;
+            glow.setActive(false);
+        })
+
+        let backward = this.add.text(350, 900, "⬇️").setInteractive().setScale(3, 3);
+        backward.on('pointerover', () => {
+            this.showMessage("Go back?");
+        })
+        .on('pointerdown', () =>{
+            this.gotoScene('b');
+        })
+
     }
 
 }
 
+class First_Door extends AdventureScene{
+    constructor(){
+        super("first_door", "Entrance");
+    }
+    preload(){
+        this.load.image("door", 'assets/first_door.jpg');
+    }
+    onEnter(){
+        this.makebg('door');
+        let interact = this.add.rectangle(780, 670, 40, 150, '0xffffff').setInteractive();
+        interact.alpha = 0.01;
+        interact.on('pointerover', () => {
+            if(this.hasItem("key")){
+                this.showMessage("Continue.");
+            }else{
+                this.showMessage("Continue?");
+            }
+        });
+        interact.on('pointerdown', () =>{
+            if(this.hasItem("key")){
+                this.showMessage("Ha. Got it!");
+                this.loseItem("key");
+                this.gotoScene("transition");
+            }else{
+                this.scene.start('closer');
+            }
+        })
 
+        let backward = this.add.text(350, 800, "⬇️").setInteractive().setScale(3, 3);
+        backward.on('pointerover', () => {
+            this.showMessage("Go back?");
+        })
+        .on('pointerdown', () =>{
+            this.gotoScene('b');
+        })
+
+    }
+}
+
+class Door_Closer extends Phaser.Scene{
+    constructor(){
+        super('closer');
+    }
+
+    preload(){
+        this.load.image('message', 'assets/door_message.jpg');
+    }
+
+    create(){
+        this.add.sprite(0, 0, 'message').setOrigin(0,0).setDisplaySize(this.game.config.width, this.game.config.height);
+        this.time.delayedCall(3000, () =>{
+            this.cameras.main.fade(1000, 0,0,0);
+            this.time.delayedCall(1000, () => this.scene.start('first_door'));
+        })
+    }
+}
+
+class Transition extends Phaser.Scene{
+    constructor(){
+        super('transition');
+    }
+    create(){
+        let message = this.add.text(25, 25, 
+            `With the door opened, I stepped into a labyrinth. Bare walls and pipes surrounded me and the relics of old machines greeted me. I made my way through winding paths and confusing routes until I was greeted by another interesting door...`).setFontSize(45);
+        message.setWordWrapWidth(1500);
+        this.time.delayedCall(6500, () =>{
+            this.cameras.main.fade(1000, 0,0,0);
+            this.time.delayedCall(1000, () => this.scene.start('final_door'));
+        })
+    }
+}
+
+class Final_Door extends AdventureScene{
+    constructor(){
+        super('final_door', "The Final Door");
+    }
+    preload(){
+        this.load.image('final_door', 'assets/final_door.jpg')
+    }
+    onEnter(){
+        this.makebg('final_door');
+
+        let left = this.add.text(100, 550, "⬅️").setInteractive().setScale(3, 3);
+        left.on("pointerdown", () => this.gotoScene('lockers'));
+        left.on("pointerover", () => this.showMessage("Turn left?"));
+
+        
+
+    }
+}
+
+class Lockers extends AdventureScene{
+    constructor(){
+        super('lockers', 'Lockers')
+    }
+    preload(){
+        this.load.image('lockers', 'assets/lockers.jpg');
+    }
+    onEnter(){
+        this.makebg('lockers');
+        let interact = this.add.rectangle(1050, 525, 240, 240, '0xffffff').setInteractive();
+        interact.alpha = 0.01;
+        interact.on('pointerover', () => {
+            this.showMessage("Examine Locker 89?");
+        });
+        interact.on('pointerdown', () => {
+            this.gotoScene('locker_interior');
+        })
+    }
+}
+
+class Locker_Interior extends AdventureScene{
+    constructor(){
+        super('locker_interior', "Locker Interior");
+    }
+    preload(){
+        this.load.image('locker_interior', 'assets/key_in_locker.jpg');
+        this.load.image('end_key', 'assets/ending_key.png');
+    }
+    onEnter(){
+        this.makebg('locker_interior');
+        //figure out why the key isn't showing up!
+        let final_key = this.add.sprite(480, 550, "end_key").setScale(6,6).setInteractive();
+        let g = final_key.preFX.addGlow();
+        let check = 0;
+
+    }
+}
 
 // class Demo2 extends AdventureScene {
 //     constructor() {
@@ -178,20 +342,6 @@ class Stairs_Right extends AdventureScene{
 //             .on('pointerdown', () => this.gotoScene('outro'));
 //     }
 // }
-
-// class Intro extends Phaser.Scene { //will want to make this one my studio scene again
-//     constructor() {
-//         super('intro')
-//     }
-//     create() {
-//         this.add.text(50,50, "Adventure awaits!").setFontSize(50);
-//         this.add.text(50,100, "Click anywhere to begin.").setFontSize(20);
-//         this.input.on('pointerdown', () => {
-//             this.cameras.main.fade(1000, 0,0,0);
-//             this.time.delayedCall(1000, () => this.scene.start('demo1'));
-//         });
-//     }
-// }
 class Studio extends Phaser.Scene {
     constructor() {
         super('studio');
@@ -220,9 +370,17 @@ class Click extends Phaser.Scene {
         super('click');
     }
     create() {
+        //debug tools
         this.input.keyboard.on('keyup-' + 'O', () => {
             this.scene.start('basement_exterior');
         });
+        this.input.keyboard.on('keyup-' + 'K', ()=> this.scene.start('right'));
+        this.input.keyboard.on('keyup-' + 'D', ()=> this.scene.start('first_door'));
+        this.input.keyboard.on('keyup-' + 'F', () => this.scene.start('final_door'));
+        this.input.keyboard.on('keyup-' + 'L', () => this.scene.start('lockers'));
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         this.add.text(655, 540, "Click to begin.").setFontSize(55);
         this.input.on('pointerdown', () => {
             this.cameras.main.fade(1000, 0, 0, 0);
@@ -247,7 +405,6 @@ class Title extends Phaser.Scene {
              repeat: -1,
              yoyo: true
          });
-        //this.blinking(play);
         play.on('pointerdown', () => {
             this.cameras.main.fade(1000, 0, 0, 0);
             this.time.delayedCall(1000, () => this.scene.start('basement_exterior'));
@@ -275,7 +432,8 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Click, Studio, Title, Basement_Exterior, Stairs, Outro],
+    scene: [Click, Studio, Title, Basement_Exterior, Stairs, Bottom, Stairs_Right, First_Door, Door_Closer, 
+        Transition, Final_Door, Lockers, Locker_Interior, Outro],
     title: "Adventure Game",
 });
 
