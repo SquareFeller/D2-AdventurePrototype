@@ -9,6 +9,7 @@ class Basement_Exterior extends AdventureScene {
         this.makebg('b_exterior');
         let right_door = this.add.text(770, 550, "DOOR");
         right_door.setFontSize(64)
+        //get the tween thing to start and stop correctly, plz, so that we can then apply it to everything
         //let b = this.blinking(right_door);
         //b.stop();
         right_door.setInteractive()
@@ -103,8 +104,8 @@ class Stairs_Right extends AdventureScene{
         this.makebg('floor');
 
         let check = 0;
-        let k = this.add.sprite(660, 380, "first key").setInteractive().setScale(1.2, 1.2);
-        k.angle = -15;
+        let k = this.add.sprite(660, 680, "first key").setInteractive().setScale(1.2, 1.2);
+        //k.angle = -15;
         let glow = k.preFX.addGlow();
         if(this.hasItem('key')){
             glow.setActive(false);
@@ -237,9 +238,6 @@ class Final_Door extends AdventureScene{
                 this.showMessage("I must be missing something.")
             }
         })
-
-        
-
     }
 }
 
