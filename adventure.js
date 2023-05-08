@@ -153,12 +153,13 @@ class AdventureScene extends Phaser.Scene {
     }
 
     blinking(key){
-        this.tweens.add({
+        let blink = this.tweens.add({
             targets: key,
             alpha: {from: 0.05, to: 1},
             duration: 1500,
             repeat: -1,
             yoyo: true
         });
+        return blink;
     }
 }
