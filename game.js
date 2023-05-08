@@ -9,10 +9,12 @@ class Basement_Exterior extends AdventureScene {
         this.makebg('b_exterior');
         let right_door = this.add.text(770, 550, "DOOR");
         right_door.setFontSize(64)
-            .setInteractive()
+        //let b = this.blinking(right_door);
+        //b.stop();
+        right_door.setInteractive()
             .on('pointerover', () => {
                 this.showMessage("A door to your right.");
-                this.blinking(right_door);
+             //   b.start();
             })
             .on('pointerdown', () => {
                 this.showMessage("Locked! No way you're getting into this one.")
@@ -25,68 +27,13 @@ class Basement_Exterior extends AdventureScene {
                     duration: 150
                 });
             })
-            // .on('pointerout', () => this.tweens.pause);
+            //.on('pointerout', () => b.stop());
         let open_door = this.add.text(470, 550, "DOOR").setFontSize(55).setInteractive();
         open_door.on('pointerover', () => {
             this.showMessage("An open door to your left. Enter?");
             this.blinking(open_door);
         });
         open_door.on('pointerdown', () => this.gotoScene('stairwell'));
-        
-        
-        // let clip = this.add.text(this.w * 0.3, this.w * 0.3, "📎 paperclip")
-        //     .setFontSize(this.s * 2)
-        //     .setInteractive() // this function is needed for the 'pointerover' stuff
-        //     .on('pointerover', () => this.showMessage("Metal, bent."))
-        //     .on('pointerdown', () => {
-        //         this.showMessage("No touching!");
-        //         this.tweens.add({
-        //             targets: clip,
-        //             x: '+=' + this.s,
-        //             repeat: 2,
-        //             yoyo: true,
-        //             ease: 'Sine.inOut',
-        //             duration: 100
-        //         });
-        //     });
-
-        // let key = this.add.text(this.w * 0.5, this.w * 0.1, "🔑 key")
-        //     .setFontSize(this.s * 2)
-        //     .setInteractive()
-        //     .on('pointerover', () => {
-        //         this.showMessage("It's a nice key.")
-        //     })
-        //     .on('pointerdown', () => {
-        //         this.showMessage("You pick up the key.");
-        //         this.gainItem('key'); //inventory function from adventure.js
-        //         this.tweens.add({
-        //             targets: key,
-        //             y: `-=${2 * this.s}`,
-        //             alpha: { from: 1, to: 0 },
-        //             duration: 500,
-        //             onComplete: () => key.destroy()
-        //         });
-        //     })
-
-        // let door = this.add.text(this.w * 0.1, this.w * 0.15, "🚪 locked door")
-        //     .setFontSize(this.s * 2)
-        //     .setInteractive()
-        //     .on('pointerover', () => {
-        //         if (this.hasItem("key")) {
-        //             this.showMessage("You've got the key for this door.");
-        //         } else {
-        //             this.showMessage("It's locked. Can you find a key?");
-        //         }
-        //     })
-        //     .on('pointerdown', () => {
-        //         if (this.hasItem("key")) {
-        //             this.loseItem("key");
-        //             this.showMessage("*squeak*");
-        //             door.setText("🚪 unlocked door");
-        //             this.gotoScene('demo2');
-        //         }
-        //     })
-
     }
 }
 
@@ -159,6 +106,9 @@ class Stairs_Right extends AdventureScene{
         let k = this.add.sprite(660, 380, "first key").setInteractive().setScale(1.2, 1.2);
         k.angle = -15;
         let glow = k.preFX.addGlow();
+        if(this.hasItem('key')){
+            glow.setActive(false);
+        }
         k.on('pointerover', () => this.showMessage("A key?"));
         k.on('pointerdown', () => {
             this.gainItem('key');
@@ -269,6 +219,25 @@ class Final_Door extends AdventureScene{
         left.on("pointerdown", () => this.gotoScene('lockers'));
         left.on("pointerover", () => this.showMessage("Turn left?"));
 
+        let interact = this.add.rectangle(650, 570, 100, 45, '0xffffff').setInteractive();
+        interact.alpha = 0.01;
+        interact.on('pointerover', () => {
+            if(this.hasItem("key")){
+                this.showMessage("Enter.");
+            }else{
+                this.showMessage("Enter?");
+            }
+        });
+        interact.on('pointerdown', () =>{
+            if(this.hasItem("key")){
+                this.showMessage("...");
+                this.loseItem("key");
+                this.gotoScene("outro");
+            }else{
+                this.showMessage("I must be missing something.")
+            }
+        })
+
         
 
     }
@@ -291,6 +260,14 @@ class Lockers extends AdventureScene{
         interact.on('pointerdown', () => {
             this.gotoScene('locker_interior');
         })
+
+        let backward = this.add.text(740, 900, "⬇️").setInteractive().setScale(3, 3);
+        backward.on('pointerover', () => {
+            this.showMessage("Go back?");
+        })
+        .on('pointerdown', () =>{
+            this.gotoScene('final_door');
+        })
     }
 }
 
@@ -304,44 +281,35 @@ class Locker_Interior extends AdventureScene{
     }
     onEnter(){
         this.makebg('locker_interior');
-        //figure out why the key isn't showing up!
-        let final_key = this.add.sprite(480, 550, "end_key").setScale(6,6).setInteractive();
+        let final_key = this.add.sprite(540, 950, "end_key").setScale(0.85,0.85).setInteractive();
         let g = final_key.preFX.addGlow();
         let check = 0;
+        if(this.hasItem('key')){
+            g.setActive(false);
+        }
+        final_key.on('pointerover', () => this.showMessage("Another key?"));
+        final_key.on('pointerdown', () => {
+            this.gainItem('key');
+            if(check == 0){
+                this.showMessage("Obtained key!")
+            }else{
+                this.showMessage("There's nothing else to take.");
+            }
+            check++;
+            g.setActive(false);
+        })
+
+        let backward = this.add.text(740, 900, "⬇️").setInteractive().setScale(3, 3);
+        backward.on('pointerover', () => {
+            this.showMessage("Go back?");
+        })
+        .on('pointerdown', () =>{
+            this.gotoScene('lockers');
+        })
 
     }
 }
 
-// class Demo2 extends AdventureScene {
-//     constructor() {
-//         super("demo2", "The second room has a long name (it truly does).");
-//     }
-//     onEnter() {
-//         this.add.text(this.w * 0.3, this.w * 0.4, "just go back")
-//             .setFontSize(this.s * 2)
-//             .setInteractive()
-//             .on('pointerover', () => {
-//                 this.showMessage("You've got no other choice, really.");
-//             })
-//             .on('pointerdown', () => {
-//                 this.gotoScene('demo1');
-//             });
-
-//         let finish = this.add.text(this.w * 0.6, this.w * 0.2, '(finish the game)')
-//             .setInteractive()
-//             .on('pointerover', () => {
-//                 this.showMessage('*giggles*');
-//                 this.tweens.add({
-//                     targets: finish,
-//                     x: this.s + (this.h - 2 * this.s) * Math.random(),
-//                     y: this.s + (this.h - 2 * this.s) * Math.random(),
-//                     ease: 'Sine.inOut',
-//                     duration: 500
-//                 });
-//             })
-//             .on('pointerdown', () => this.gotoScene('outro'));
-//     }
-// }
 class Studio extends Phaser.Scene {
     constructor() {
         super('studio');
@@ -418,8 +386,8 @@ class Outro extends Phaser.Scene {
         super('outro');
     }
     create() {
-        this.add.text(50, 50, "That's all!").setFontSize(50);
-        this.add.text(50, 100, "Click anywhere to restart.").setFontSize(20);
+        this.add.text(50, 50, "You wish you hadn't opened the door. You weren't sure why you were here in the first place, but you never imagined it would lead to this. Before more regret seeped in, you were dragged in by that THING. Never to be seen again.").setFontSize(50).setWordWrapWidth(1500);
+        this.add.text(50, 300, "Click anywhere to restart.").setFontSize(20);
         this.input.on('pointerdown', () => this.scene.start('studio'));
     }
 }
@@ -436,4 +404,3 @@ const game = new Phaser.Game({
         Transition, Final_Door, Lockers, Locker_Interior, Outro],
     title: "Adventure Game",
 });
-
