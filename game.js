@@ -56,6 +56,14 @@ class Stairs extends AdventureScene {
         let b;
         let b2;
         let forward = this.add.text(350, 450, "⬆️").setInteractive().setScale(3, 3);
+        this.tweens.add({
+            targets: forward,
+            y: '-=' + this.game.config.width * 0.01,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.InOut',
+            duration: 300
+        });
         forward.on('pointerover', () => {
             this.showMessage("Continue down the stairs?");
             b = this.blinking(forward);
@@ -66,6 +74,14 @@ class Stairs extends AdventureScene {
             forward.alpha = 1;
         })
         let backward = this.add.text(350, 800, "⬇️").setInteractive().setScale(3, 3);
+        this.tweens.add({
+            targets: backward,
+            y: '+=' + this.game.config.width * 0.01,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.InOut',
+            duration: 300
+        });
         backward.on('pointerover', () => {
             this.showMessage("Go back?");
             b2 = this.blinking(backward);
@@ -94,6 +110,14 @@ class Bottom extends AdventureScene {
         let b3;
 
         let right = this.add.text(850, 550, "➡️").setInteractive().setScale(3, 3);
+        this.tweens.add({
+            targets: right,
+            x: '+=' + this.game.config.width * 0.01,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.InOut',
+            duration: 300
+        });
         right.on('pointerover', () => {
             this.showMessage("Examine the space underneath the stairs?");
             b = this.blinking(right);
@@ -105,6 +129,14 @@ class Bottom extends AdventureScene {
         })
 
         let backward = this.add.text(450, 900, "⬇️").setInteractive().setScale(3, 3);
+        this.tweens.add({
+            targets: backward,
+            y: '+=' + this.game.config.width * 0.01,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.InOut',
+            duration: 300
+        });
         backward.on('pointerover', () => {
             this.showMessage("Go back?");
             b2 = this.blinking(backward);
@@ -118,6 +150,14 @@ class Bottom extends AdventureScene {
             })
 
         let left = this.add.text(350, 550, "⬅️").setInteractive().setScale(3, 3);
+        this.tweens.add({
+            targets: left,
+            x: '-=' + this.game.config.width * 0.01,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.InOut',
+            duration: 300
+        });
         left.on("pointerdown", () => this.gotoScene('first_door'));
         left.on("pointerover", () => {
             this.showMessage("Turn left?");
@@ -164,6 +204,14 @@ class Stairs_Right extends AdventureScene {
         })
 
         let backward = this.add.text(350, 900, "⬇️").setInteractive().setScale(3, 3);
+        this.tweens.add({
+            targets: backward,
+            y: '+=' + this.game.config.width * 0.01,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.InOut',
+            duration: 300
+        });
         backward.on('pointerover', () => {
             this.showMessage("Go back?");
             b = this.blinking(backward);
@@ -210,6 +258,14 @@ class First_Door extends AdventureScene {
         })
 
         let backward = this.add.text(350, 800, "⬇️").setInteractive().setScale(3, 3);
+        this.tweens.add({
+            targets: backward,
+            y: '+=' + this.game.config.width * 0.01,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.InOut',
+            duration: 300
+        });
         backward.on('pointerover', () => {
             this.showMessage("Go back?");
             b = this.blinking(backward);
@@ -278,6 +334,14 @@ class Final_Door extends AdventureScene {
         let b;
 
         let left = this.add.text(100, 550, "⬅️").setInteractive().setScale(3, 3);
+        this.tweens.add({
+            targets: left,
+            x: '-=' + this.game.config.width * 0.01,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.InOut',
+            duration: 300
+        });
         left.on("pointerdown", () => this.gotoScene('lockers'));
         left.on("pointerover", () => {
             this.showMessage("Turn left?");
@@ -330,6 +394,14 @@ class Lockers extends AdventureScene {
         })
 
         let backward = this.add.text(740, 900, "⬇️").setInteractive().setScale(3, 3);
+        this.tweens.add({
+            targets: backward,
+            y: '+=' + this.game.config.width * 0.01,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.InOut',
+            duration: 300
+        });
         backward.on('pointerover', () => {
             this.showMessage("Go back?");
             b = this.blinking(backward);
@@ -379,6 +451,14 @@ class Locker_Interior extends AdventureScene {
         })
 
         let backward = this.add.text(740, 900, "⬇️").setInteractive().setScale(3, 3);
+        this.tweens.add({
+            targets: backward,
+            y: '+=' + this.game.config.width * 0.01,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.InOut',
+            duration: 300
+        });
         backward.on('pointerover', () => {
             this.showMessage("Go back?");
             b = this.blinking(backward);
